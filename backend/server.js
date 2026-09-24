@@ -192,8 +192,8 @@ function enrichLead(lead) {
   const daysSinceCreated = daysSince(lead.createdAt);
   const daysSinceFollowUp = lead.lastFollowUp ? daysSince(lead.lastFollowUp) : null;
   const isAged = daysSinceCreated >= 7 && !['Converted', 'Dropped'].includes(lead.status);
-  const needsFollowUp = (!lead.lastFollowUp && daysSinceCreated > 2) ||
-    (lead.lastFollowUp && daysSinceFollowUp > 3 && !['Converted', 'Dropped'].includes(lead.status));
+  const needsFollowUp = (!lead.lastFollowUp && daysSinceCreated >= 2) ||
+    (lead.lastFollowUp && daysSinceFollowUp >= 3 && !['Converted', 'Dropped'].includes(lead.status));
   return {
     ...lead,
     counsellorName: counsellor ? counsellor.name : 'Unassigned',

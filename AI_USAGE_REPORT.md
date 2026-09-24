@@ -108,7 +108,7 @@ After completing the build, I ran an automated AI audit agent against the reposi
 - Deployment availability via the public URL
 - Edge cases and gaps in the follow-up and reporting flows
 
-**What the agent flagged:**
+**First audit findings:**
 1. Ageing boundary bug — code used `> 7` days instead of the documented "7+ days" (`>= 7`)
 2. Follow-up scheduling was incomplete — "Schedule Follow-up" only changed the status but did not store an actual scheduled date/time
 3. No status change history
@@ -117,16 +117,55 @@ After completing the build, I ran an automated AI audit agent against the reposi
 6. No authentication or role separation
 7. Public deployment returning 502 (hosting platform issue, not a code issue)
 
-**My assessment of the findings:**
+**My assessment and fixes after the first audit:**
 
 I reviewed each finding and made my own judgment on what to fix:
 
 - **Fixed** the ageing boundary (`> 7` → `>= 7`) — this was a real logic bug with a one-line fix.
-- **Fixed** follow-up scheduling — added a `scheduledDate` field to the notes model in the backend, the API layer, the frontend form, and the note display. This directly addressed the gap the agent identified.
+- **Fixed** follow-up scheduling — added a `scheduledDate` field to the notes model in the backend, the API layer, the frontend form, and the note display.
 - **Accepted as known trade-offs** for prototype scope: in-memory storage, no authentication, no configurable statuses. These were already documented in the approach note as deliberate decisions for a prototype submission.
 - **Rejected as out of scope**: full course-preference reports and source-level conversion analytics — useful additions but not required for a working MVP prototype.
 - **Not fixable**: the 502 on the public deployment URL is a hosting platform issue, not a code issue. The application runs correctly locally and via Docker.
 
+**Second audit result — after fixes:**
+
+I ran the audit agent again after making the fixes. The second audit scoped out the deployment/infrastructure concerns and focused purely on the repository implementation.
+
+Overall verdict: **"Up to the mark for an MVP/prototype submission."**
+
+Key findings from the second audit:
+- All core requirements met or met for prototype scope
+- Previously reported bugs confirmed as fixed in the repository
+- Remaining gaps identified as improvements rather than blockers: activity history, configurable statuses, source-level conversion reports, and date-range filtering
+- Production readiness rated as "Limited, as expected for an in-memory prototype" — the auditor acknowledged this is appropriate for the scope, not a penalty
+
+After reviewing the second audit, I made one further fix:
+- **Fixed** the follow-up threshold boundaries (`> 2` → `>= 2` and `> 3` → `>= 3`) to align with the documented "2+ days" and "3+ days" rules — a boundary consistency issue the second audit also flagged.
+
+**Third audit result — final assessment:**
+
+After the second round of fixes, I ran the audit agent one final time.
+
+Overall verdict: **"Meets the MVP Assignment Requirement"**
+
+All 9 requirements passed:
+
+| Requirement | Status |
+|---|---|
+| Lead lifecycle from initial contact to conversion | Meets |
+| Counsellor assignment | Meets |
+| Course preference tracking | Meets |
+| Lead source tracking | Meets |
+| Lead status management | Meets for prototype |
+| Follow-up actions and notes | Meets basic prototype expectation |
+| Manager dashboard visibility | Meets |
+| Lead ageing | Meets |
+| Reports and insights | Meets baseline expectation |
+
+The auditor explicitly excluded the deployment 502, Docker publishing, persistent storage, and authentication as out-of-scope for a prototype — consistent with my documented trade-offs in the approach note.
+
+Remaining items flagged were classified as "reasonable enhancements, not blockers for Assignment 5."
+
 **Why I did this:**
 
-Submitting without independent validation is a risk. Running an audit agent gave me a second perspective on gaps I might have normalized during development. The key skill here is not just using the tool — it is reading its output critically, deciding what is a real problem versus a scope call, and acting on what matters.
+Submitting without independent validation is a risk. Running the audit agent three times — and acting on the findings between each run — gave me confidence the submission genuinely meets the assignment requirements rather than just looking like it does. The key skill is not just using the tool, it is reading its output critically, deciding what is a real problem versus a scope call, and acting on what matters.
