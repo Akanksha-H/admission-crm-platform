@@ -95,3 +95,38 @@ I made all the product and flow decisions: what the system should do, how leads 
 ## Summary
 
 AI accelerated the entire build — backend, frontend, CSS, Docker, and documentation. But every decision about what to build was mine: the status pipeline, the ageing rules, the duplicate detection approach, what the dashboard should show, and how the UI should behave. I treated AI as a fast coder, not a product designer. I tested the output in the browser, caught real bugs, and fixed them. The code runs, the features work, and I can explain every decision.
+
+---
+
+## Post-Build Validation Using an AI Audit Agent
+
+After completing the build, I ran an automated AI audit agent against the repository and the public deployment to get an independent assessment of the submission.
+
+**What the agent checked:**
+- Requirement coverage against the Assignment 5 spec
+- Code-level implementation of each feature
+- Deployment availability via the public URL
+- Edge cases and gaps in the follow-up and reporting flows
+
+**What the agent flagged:**
+1. Ageing boundary bug — code used `> 7` days instead of the documented "7+ days" (`>= 7`)
+2. Follow-up scheduling was incomplete — "Schedule Follow-up" only changed the status but did not store an actual scheduled date/time
+3. No status change history
+4. No course-preference or source-level conversion reports
+5. In-memory storage loses data on restart
+6. No authentication or role separation
+7. Public deployment returning 502 (hosting platform issue, not a code issue)
+
+**My assessment of the findings:**
+
+I reviewed each finding and made my own judgment on what to fix:
+
+- **Fixed** the ageing boundary (`> 7` → `>= 7`) — this was a real logic bug with a one-line fix.
+- **Fixed** follow-up scheduling — added a `scheduledDate` field to the notes model in the backend, the API layer, the frontend form, and the note display. This directly addressed the gap the agent identified.
+- **Accepted as known trade-offs** for prototype scope: in-memory storage, no authentication, no configurable statuses. These were already documented in the approach note as deliberate decisions for a prototype submission.
+- **Rejected as out of scope**: full course-preference reports and source-level conversion analytics — useful additions but not required for a working MVP prototype.
+- **Not fixable**: the 502 on the public deployment URL is a hosting platform issue, not a code issue. The application runs correctly locally and via Docker.
+
+**Why I did this:**
+
+Submitting without independent validation is a risk. Running an audit agent gave me a second perspective on gaps I might have normalized during development. The key skill here is not just using the tool — it is reading its output critically, deciding what is a real problem versus a scope call, and acting on what matters.

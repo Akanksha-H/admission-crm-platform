@@ -21,6 +21,7 @@ export default function LeadDetail({ page, id, onBack }) {
   const [meta, setMeta]         = useState(null);
   const [noteText, setNoteText] = useState('');
   const [noteBy, setNoteBy]     = useState('');
+  const [noteScheduledDate, setNoteScheduledDate] = useState('');
   const [saving, setSaving]     = useState(false);
   const [editing, setEditing]   = useState(false);
   const [editForm, setEditForm] = useState({});
@@ -81,10 +82,11 @@ export default function LeadDetail({ page, id, onBack }) {
     e.preventDefault();
     if (!noteText.trim()) return;
     setSaving(true);
-    const updated = await addNote(id, noteText.trim(), noteBy.trim() || 'Staff');
+    const updated = await addNote(id, noteText.trim(), noteBy.trim() || 'Staff', noteScheduledDate || null);
     setLead(updated);
     setNoteText('');
     setNoteBy('');
+    setNoteScheduledDate('');
     setSaving(false);
     addToast('Follow-up note added', 'success');
   }
@@ -282,6 +284,11 @@ export default function LeadDetail({ page, id, onBack }) {
                   {[...lead.notes].reverse().map(note => (
                     <div key={note.id} className="note-item">
                       <div className="note-text">{note.text}</div>
+                      {note.scheduledDate && (
+                        <div className="note-scheduled">
+                          📅 Follow-up scheduled: {new Date(note.scheduledDate).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      )}
                       <div className="note-meta">By {note.by} • {fmt(note.createdAt)}</div>
                     </div>
                   ))}
@@ -292,6 +299,14 @@ export default function LeadDetail({ page, id, onBack }) {
                   <label>Add Follow-up Note</label>
                   <textarea rows={3} placeholder="What happened? What are the next steps?"
                     value={noteText} onChange={e => setNoteText(e.target.value)} style={{ resize: 'vertical' }} />
+                </div>
+                <div className="form-row" style={{ marginBottom: 10 }}>
+                  <label>Schedule Follow-up Date &amp; Time (optional)</label>
+                  <input
+                    type="datetime-local"
+                    value={noteScheduledDate}
+                    onChange={e => setNoteScheduledDate(e.target.value)}
+                  />
                 </div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                   <input placeholder="Your name (optional)" value={noteBy}

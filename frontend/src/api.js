@@ -37,11 +37,11 @@ export async function updateLead(id, data) {
   return res.json();
 }
 
-export async function addNote(id, text, by) {
+export async function addNote(id, text, by, scheduledDate) {
   const res = await fetch(`${BASE}/leads/${id}/notes`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, by }),
+    body: JSON.stringify({ text, by, scheduledDate }),
   });
   return res.json();
 }

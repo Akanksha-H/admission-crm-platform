@@ -354,6 +354,7 @@ tr:hover td { background: #f9fafb; }
   padding: 10px 12px;
 }
 .note-meta { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+.note-scheduled { font-size: 12px; color: #4f46e5; font-weight: 600; margin-top: 4px; }
 .note-text { font-size: 13px; color: #374151; }
 
 /* Pipeline bar */

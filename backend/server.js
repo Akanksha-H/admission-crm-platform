@@ -191,7 +191,7 @@ function enrichLead(lead) {
   const counsellor = counsellors.find(c => c.id === lead.counsellorId) || null;
   const daysSinceCreated = daysSince(lead.createdAt);
   const daysSinceFollowUp = lead.lastFollowUp ? daysSince(lead.lastFollowUp) : null;
-  const isAged = daysSinceCreated > 7 && !['Converted', 'Dropped'].includes(lead.status);
+  const isAged = daysSinceCreated >= 7 && !['Converted', 'Dropped'].includes(lead.status);
   const needsFollowUp = (!lead.lastFollowUp && daysSinceCreated > 2) ||
     (lead.lastFollowUp && daysSinceFollowUp > 3 && !['Converted', 'Dropped'].includes(lead.status));
   return {
@@ -284,12 +284,13 @@ app.patch('/api/leads/:id', (req, res) => {
 app.post('/api/leads/:id/notes', (req, res) => {
   const lead = leads.find(l => l.id === req.params.id);
   if (!lead) return res.status(404).json({ error: 'Lead not found' });
-  const { text, by } = req.body;
+  const { text, by, scheduledDate } = req.body;
   if (!text) return res.status(400).json({ error: 'Note text is required' });
   const note = {
     id: uuidv4(),
     text,
     by: by || 'Staff',
+    scheduledDate: scheduledDate || null,
     createdAt: new Date().toISOString(),
   };
   lead.notes.push(note);
