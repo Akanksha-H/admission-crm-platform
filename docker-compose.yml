@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: admission-crm-backend
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: admission-crm-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
